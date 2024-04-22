@@ -1,0 +1,26 @@
+{
+  "name": "@keysentry/server",
+  "version": "1.0.0",
+  "description": "KeySentry backend server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mavyfaby/keysentry.git"
+  },
+  "author": "Maverick Fabroa",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/mavyfaby/keysentry/issues"
+  },
+  "homepage": "https://github.com/mavyfaby/keysentry#readme",
+  "dependencies": {
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.8"
+  }
+}
