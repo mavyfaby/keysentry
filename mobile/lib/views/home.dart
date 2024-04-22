@@ -3,10 +3,13 @@ import 'dart:ui';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:web_socket_client/web_socket_client.dart';
 
 import '../enum/status.dart';
 import '../controller/socket.ctrl.dart';
 import '../widgets/switch_brightness.dart';
+
+WebSocket? socket;
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -17,7 +20,7 @@ class HomeView extends StatelessWidget {
     
     return RefreshIndicator(
       onRefresh: () async {
-        
+        socketCtrl.initSocket();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -44,14 +47,14 @@ class HomeView extends StatelessWidget {
           child: ListView(
             children: [
               const SizedBox(height: 32),
-              Text(socketCtrl.status == SentryStatus.disconnected ?
+              Obx(() => Text(socketCtrl.status != SentryStatus.connected ?
                 'Pull to refresh to re-connect to server.' :
                 'You are connected to the server.',
                 textAlign: TextAlign.center,
                 style: Get.textTheme.bodyMedium!.copyWith(
                   color: Get.theme.colorScheme.onSurfaceVariant
                 ),
-              ),
+              )),
               const SizedBox(height: 12),
               Obx(() => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -80,17 +83,25 @@ class HomeView extends StatelessWidget {
                   width: 275,
                   height: 275,
                   child: Obx(() => FilledButton(
-                    onPressed: socketCtrl.status == SentryStatus.connected ? () {
-                      socketCtrl.isLocked = !socketCtrl.isLocked;
+                    onPressed: socketCtrl.status == SentryStatus.connected && socketCtrl.isLocked != -2 ? () {
+                      socketCtrl.toggleLock();
                     } : null,
-                    child: Text(socketCtrl.isLocked ? "Unlock" : "Lock",
+                    child: Text(
+                      socketCtrl.status != SentryStatus.connected || socketCtrl.isLocked == -2 ? "Toggle" :
+                        socketCtrl.isLocked == -1 ? "Unknown" :
+                        socketCtrl.isLocked == 0 ? "Lock" : "Unlock",
                       textScaler: const TextScaler.linear(2)
                     )
                   )),
                 ),
               ),
               const SizedBox(height: 64),
-              Obx(() => Text("Status: ${socketCtrl.isLocked ? "Locked" : "Unlocked"}",
+              Obx(() => Text(
+                "Status: ${socketCtrl.status != SentryStatus.connected ? "Not connected" :
+                  socketCtrl.isLocked == -2 ? "No locker connected" :
+                  socketCtrl.isLocked == -1 ? "Unknown" :
+                  socketCtrl.isLocked == 0 ? "Unlocked" : "Locked"
+                }",
                 textAlign: TextAlign.center,
                 style: Get.textTheme.bodyMedium!.copyWith(
                   color: Get.theme.colorScheme.onSurfaceVariant
@@ -128,6 +139,24 @@ class HomeView extends StatelessWidget {
         return "Connecting";
       default:
         return "Unknown";
+    }
+  }
+
+  /// Map the connection state to a string
+  String mapSocketStatus(int state) {
+    switch (state) {
+      case 0:
+        return "Connecting";
+      case 1:
+        return "Connected";
+      case 2:
+        return "Reconnecting";
+      case 3:
+        return "Reconnected";
+      case 4:
+        return "Disconnecting";
+      default:
+        return "Disconnected";
     }
   }
 }

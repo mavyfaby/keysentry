@@ -8,6 +8,12 @@ import 'views/settings.dart';
 import 'controller/settings.ctrl.dart';
 import 'controller/socket.ctrl.dart';
 
+/// KeySentry Websocket Server
+/// An arduino based project that uses a Node.js server to communicate between
+/// a mobile client and a locker.
+/// 
+/// @author mavyfaby (Maverick Fabroa)
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   

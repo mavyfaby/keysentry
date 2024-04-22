@@ -25,7 +25,7 @@ class SettingsView extends StatelessWidget {
               title: const Text('Server IP Address'),
               subtitle: Obx(
                 () => Text(
-                  ctrl.ip.toString().trim().isEmpty ? '(Not set)' : "http://${ctrl.ip}"
+                  ctrl.ip.toString().trim().isEmpty ? '(Not set)' : "ws://${ctrl.ip}"
                 )
               ),
               trailing: const Icon(Icons.keyboard_arrow_right),
@@ -37,7 +37,7 @@ class SettingsView extends StatelessWidget {
                       controller: ipCtrl,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        prefixText: "http://",
+                        prefixText: "ws://",
                         labelText: 'IP Address',
                         hintText: "localhost",
                       ),
