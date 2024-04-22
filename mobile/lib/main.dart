@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get/get.dart';
 
-void main() {
+import 'theme.dart';
+import 'views/home.dart';
+import 'views/settings.dart';
+import 'controller/settings.ctrl.dart';
+import 'controller/socket.ctrl.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Hive.initFlutter();
+  await Hive.openBox("settings");
+
+  Get.put(SettingsController());
+  Get.put(SocketController());
+
   runApp(const MyApp());
 }
 
@@ -12,27 +27,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'KeySentry',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const HomePage(),
+      theme: (const MaterialTheme(TextTheme())).light(),
+      darkTheme: (const MaterialTheme(TextTheme())).dark(),
+      themeMode: ThemeMode.light,
+      initialRoute: "/home",
+      routes: {
+        "/home": (_) => const HomeView(),
+        "/settings": (_) => const SettingsView(),
+      },
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('KeySentry'),
-      ),
-      body: const Center(
-        child: Text("KeySentry App"),
-      ),
-    );
-  }
-}
